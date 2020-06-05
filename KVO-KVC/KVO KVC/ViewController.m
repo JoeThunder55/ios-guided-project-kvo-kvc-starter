@@ -22,16 +22,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-
+    
+    
     LSIDepartment *marketing = [[LSIDepartment alloc] init];
     marketing.name = @"Marketing";
     LSIEmployee *philSchiller = [[LSIEmployee alloc] init];
     philSchiller.name = @"Phil";
     philSchiller.jobTitle = @"VP of Marketing";
-    philSchiller.salary = 10000000; 
+    philSchiller.salary = 10000000;
     marketing.manager = philSchiller;
-
+    
     
     LSIDepartment *engineering = [[LSIDepartment alloc] init];
     engineering.name = @"Engineering";
@@ -59,7 +59,7 @@
     [engineering addEmployee:e1];
     [engineering addEmployee:e2];
     [marketing addEmployee:e3];
-
+    
     LSIHRController *controller = [[LSIHRController alloc] init];
     [controller addDepartment:engineering];
     [controller addDepartment:marketing];
@@ -67,27 +67,27 @@
     
     NSLog(@"%@", self.hrController);
     
-//    NSString *key = @"privateName";
-//
-//    NSString *value = [craig valueForKey:key];
-//    NSLog(@"value for key %@", key, value);
-//
-//    [philSchiller setValue:@"Awesome Phil" forKey:key];
-//
-//    value = [philSchiller valueForKey:key];
-//
-//        NSLog(@"value for key %@: %@", key, value);
+    //    NSString *key = @"privateName";
+    //
+    //    NSString *value = [craig valueForKey:key];
+    //    NSLog(@"value for key %@", key, value);
+    //
+    //    [philSchiller setValue:@"Awesome Phil" forKey:key];
+    //
+    //    value = [philSchiller valueForKey:key];
+    //
+    //        NSLog(@"value for key %@: %@", key, value);
     
-//    NSString *keyPath = @"departments.employees";
+    //    NSString *keyPath = @"departments.employees";
     
     NSString *keyPath = @"departments.@distinctUnionOfArrays.employees";
     
     NSArray *employees = [self.hrController valueForKeyPath:keyPath];
     NSLog(@"Employees: %@", employees);
     
-//    NSString *key = @"salary";
-//    NSArray *salaries = [employees valueForKeyPath:key];
-//    NSLog(@"Salaries: %@", salaries);
+    //    NSString *key = @"salary";
+    //    NSArray *salaries = [employees valueForKeyPath:key];
+    //    NSLog(@"Salaries: %@", salaries);
     
     @try {
         NSArray *directSalaries = [self valueForKeyPath:@"hrController.departments.employees.salary"];
@@ -100,7 +100,18 @@
     
     NSLog(@"Avg Salary: %@", [employees valueForKeyPath:@"@avg.salary"]);
     
+    NSSortDescriptor *nameSortDiscriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+    
+    NSSortDescriptor *salarySortDiscriptor = [NSSortDescriptor sortDescriptorWithKey:@"salary" ascending:NO];
+    
+    NSArray *sortedEmployees = [employees sortedArrayUsingDescriptors:@[nameSortDiscriptor,
+                                    salarySortDiscriptor]];
+    
+    NSLog(@"Sorted: %@", sortedEmployees);
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", @"John"];
+    NSArray *filteredEmployees = [employees filteredArrayUsingPredicate:predicate];
+    NSLog(@"Filtered: %@", filteredEmployees);
 }
-
 
 @end

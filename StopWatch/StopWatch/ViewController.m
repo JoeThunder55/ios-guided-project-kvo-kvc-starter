@@ -11,7 +11,7 @@
 
 
 // TODO: Create a KVOContext to identify the StopWatch observer
-
+void *KVOContext = &KVOContext;
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
@@ -76,17 +76,41 @@
         _stopwatch = stopwatch;
         
         // didSet
-		// TODO: Setup KVO - Add Observers
+		[_stopwatch addObserver:self
+                     forKeyPath:@"running"
+                        options:0
+                        context:KVOContext];
+        [_stopwatch addObserver:self
+                     forKeyPath:@"elapstedTime"
+                        options:0
+                        context:KVOContext];
     }
     
 }
 
 
 // TODO: Review docs and implement observerValueForKeyPath
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    if (context == KVOContext) {
+        if ([keyPath isEqualToString:@"running"]) {
+            NSLog(@"Update the UI! Running: %@", (self.stopwatch.running ? @"YES" : @"NO"));
+            [self updateViews];
+        } else if ([keyPath isEqualToString:@"elapsedTime"]) {
+            NSLog(@"Update the UI! Elapsed Time: %.2f", self.stopwatch.elapsedTime);
+            [self updateViews];
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
 
 
 - (void)dealloc {
 	// TODO: Stop observing KVO (otherwise it will crash randomly)
+    
     
 }
 
