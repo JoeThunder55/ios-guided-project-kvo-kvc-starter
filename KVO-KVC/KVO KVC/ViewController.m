@@ -67,14 +67,39 @@
     
     NSLog(@"%@", self.hrController);
     
-    NSString *key = @"name";
-    NSString *value = [craig valueForKey:key];
-    NSLog(@"value for key %@", key, value);
+//    NSString *key = @"privateName";
+//
+//    NSString *value = [craig valueForKey:key];
+//    NSLog(@"value for key %@", key, value);
+//
+//    [philSchiller setValue:@"Awesome Phil" forKey:key];
+//
+//    value = [philSchiller valueForKey:key];
+//
+//        NSLog(@"value for key %@: %@", key, value);
     
-    for (id employee in engineering.employees) {
-        NSString *value = [employee valueForKey:key];
-        NSLog(@"value for key %@: %@", key, value);
+//    NSString *keyPath = @"departments.employees";
+    
+    NSString *keyPath = @"departments.@distinctUnionOfArrays.employees";
+    
+    NSArray *employees = [self.hrController valueForKeyPath:keyPath];
+    NSLog(@"Employees: %@", employees);
+    
+//    NSString *key = @"salary";
+//    NSArray *salaries = [employees valueForKeyPath:key];
+//    NSLog(@"Salaries: %@", salaries);
+    
+    @try {
+        NSArray *directSalaries = [self valueForKeyPath:@"hrController.departments.employees.salary"];
+        NSLog(@"Direct Salaries: %@", directSalaries);
+    } @catch (NSException *exception) {
+        NSLog(@"Got an exception: %@", exception);
     }
+    
+    [craig setValue:@(42 + 5) forKey:@"salary"];
+    
+    NSLog(@"Avg Salary: %@", [employees valueForKeyPath:@"@avg.salary"]);
+    
 }
 
 
